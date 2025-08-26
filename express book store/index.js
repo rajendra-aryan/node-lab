@@ -11,18 +11,20 @@ const books= [
 ];
 
 
+function customMiddleware(req,res,next){
+    console.log("I am a middleware");
+    next();
+}
+
 //Middlewares(Plugins)
 app.use(express.json());
 
-app.use((req,res,next)=>{
-    console.log("I am a middleware");
-    next();
-})
+app.use(customMiddleware)
 
-app.use((req,res,next)=>{
-    console.log("I am also an middleware");
-    next()
-})
+// app.use((req,res,next)=>{
+//     console.log("I am also an middleware");
+//     next()
+// })
 
 
 //Routes
@@ -31,7 +33,7 @@ app.get('/books', (req, res)=>{
     res.json(books)
 })
 
-app.get('/books/:id', (req,res)=>{
+app.get('/books/:id',customMiddleware, (req,res)=>{
     const id = parseInt(req.params.id);
 
     if(isNaN(id)){
