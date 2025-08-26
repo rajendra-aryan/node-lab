@@ -14,13 +14,22 @@ const books= [
 //Middlewares(Plugins)
 app.use(express.json());
 
+app.use((req,res,next)=>{
+    console.log("I am a middleware");
+    next();
+})
+
+app.use((req,res,next)=>{
+    console.log("I am also an middleware");
+    next()
+})
+
 
 //Routes
 app.get('/books', (req, res)=>{
     // res.setHeader('x-aryan', "Rajendra")
     res.json(books)
 })
-
 
 app.get('/books/:id', (req,res)=>{
     const id = parseInt(req.params.id);
@@ -70,5 +79,7 @@ app.delete('/books/:id', (req,res)=>{
     books.splice(index,1);
     return res.status(200).json({message: `Book deleted`})
 })
+
+
 
 app.listen(port,() => console.log(`HTTP server is running on port: ${port}`)) 
