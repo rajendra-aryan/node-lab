@@ -3,26 +3,20 @@ import db from "../db/index.js"
 import { usersTable, userSession } from "../db/schema.js"
 import { eq } from "drizzle-orm"
 import {randomBytes, createHmac} from "crypto"
+import jwt from "jsonwebtoken"
+import { ensureAuthenticated } from "../middlewares/auth.middleware.js"
+
 
 const router = express.Router()
 
-router.patch('/', async(req, res)=>{
-    const user = req.user
-    if(!user){
-        return res.status(401).json({error: "You are not logged in"})
-    }
+router.patch('/',ensureAuthenticated,  async(req, res)=>{
     const {name} = req.body
     await db.update(usersTable).set({name}).where(eq(usersTable.id, user.id))
 
     return res.json({status:'success'})
 })
 
-router.get('/', async(req, res)=>{
-    const user = req.user
-    if(!user){
-        return res.status(401).json({error: "You are not logged in"})
-    }
-
+router.get('/',ensureAuthenticated, async(req, res)=>{
     return res.json({user})
 })
 
@@ -59,8 +53,10 @@ router.post('/login', async (req, res)=>{
     const [existingUser] = await db
     .select({
         id: usersTable.id,
+        name: usersTable.name,
         email: usersTable.email,
         salt: usersTable.salt,
+        role: usersTable.role,
         password: usersTable.password
     })
     .from(usersTable)
@@ -79,10 +75,16 @@ router.post('/login', async (req, res)=>{
         return res.status(400).json({error:`Incorrect password`})
     }
 
-    const [session] = await db.insert(userSession).values({
-        userId: existingUser.id
-    }).returning({ id: userSession.id})
-    return res.json({status:"success", sessionId:session.id})
+    const payload = {
+        id: existingUser.id,
+        name : existingUser.name,
+        email : existingUser.email,
+        role: existingUser.role
+    }
+
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {expiresIn:"1m"})
+
+    return res.json({status:"success", token})
 })
 
 
