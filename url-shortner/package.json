@@ -1,0 +1,20 @@
+{
+  "name": "url-shortner",
+  "version": "1.0.0",
+  "description": "This document lists all the tools, technologies, and libraries used in the URL Shortener project. Ensure you have everything set up before beginning development.",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.2",
+    "drizzle-orm": "^0.44.5",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.16.3"
+  }
+}
