@@ -9,7 +9,10 @@ RUN npm install
 #Copying the source code to docker image
 COPY index.js index.js
 
-EXPOSE 8000-8005
+COPY Dockerfile Dockerfile
+
+ENV PORT=8000
+EXPOSE 8000
 
 CMD [ "npm", "start" ]
 
